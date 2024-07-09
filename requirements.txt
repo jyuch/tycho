@@ -1,0 +1,6 @@
+appdirs==1.4.4
+lxml==5.2.2
+packaging==24.1
+pyshark==0.6
+ruff==0.5.1
+termcolor==2.4.0
