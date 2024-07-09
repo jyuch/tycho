@@ -1,0 +1,5 @@
+# Packet capture file
+*.pcapng
+
+# Python venv
+.venv
