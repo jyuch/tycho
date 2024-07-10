@@ -10,6 +10,8 @@ def main():
         writer.writerow(
             [
                 "sniff_time",
+                "eth_src",
+                "eth_dst",
                 "opcode",
                 "src_hw_mac",
                 "src_proto_ipv4",
@@ -19,27 +21,34 @@ def main():
         )
 
         for pcap_file in glob.glob(".\pcapng\*.pcapng"):
-            capture = pyshark.FileCapture(pcap_file)
+            print(pcap_file)
 
-            for p in capture:
-                if "arp" in p:
-                    sniff_time = p.sniff_time.isoformat()
-                    opcode = p.arp.opcode
-                    src_hw_mac = p.arp.src_hw_mac
-                    src_proto_ipv4 = p.arp.src_proto_ipv4
-                    dst_hw_mac = p.arp.dst_hw_mac
-                    dst_proto_ipv4 = p.arp.dst_proto_ipv4
+            with pyshark.FileCapture(pcap_file) as capture:
+                for p in capture:
+                    if "arp" in p:
+                        arp = p.arp
+                        eth = p.eth
+                        sniff_time = p.sniff_time.isoformat()
+                        opcode = arp.get("opcode")
+                        eth_src = eth.get("src")
+                        src_hw_mac = arp.get("src_hw_mac")
+                        src_proto_ipv4 = arp.get("src_proto_ipv4")
+                        eth_dst = eth.get("dst")
+                        dst_hw_mac = arp.get("dst_hw_mac")
+                        dst_proto_ipv4 = arp.get("dst_proto_ipv4")
 
-                    writer.writerow(
-                        [
-                            sniff_time,
-                            opcode,
-                            src_hw_mac,
-                            src_proto_ipv4,
-                            dst_hw_mac,
-                            dst_proto_ipv4,
-                        ]
-                    )
+                        writer.writerow(
+                            [
+                                sniff_time,
+                                eth_src,
+                                eth_dst,
+                                opcode,
+                                src_hw_mac,
+                                src_proto_ipv4,
+                                dst_hw_mac,
+                                dst_proto_ipv4,
+                            ]
+                        )
 
 
 if __name__ == "__main__":
